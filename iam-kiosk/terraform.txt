@@ -1,0 +1,9 @@
+terraform {
+  cloud {
+    organization = "citrusoft-training"
+
+    workspaces {
+      name = "tfc-cli"
+    }
+  }
+}
