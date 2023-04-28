@@ -130,3 +130,6 @@ dmypy.json
 
 .terraform*
 
+__MACOSX/
+.DS_Store
+
