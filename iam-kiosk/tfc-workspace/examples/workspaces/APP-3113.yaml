@@ -1,0 +1,17 @@
+---
+workspaces:
+  demo:
+    read_only_ad_group: AWS-A9999-All-Read
+    apply_ad_group: AWS-A9999-All-Apply
+    github_repo: pge-tfc-brownbag
+    tags: ["tfc", "iac", "app-3113", unittest]
+    terraform_version: "1.2.3"
+    drift_detection: true
+    environment:
+      dev:
+        account: "750713712981"
+        branch: Dev
+        auto_apply: false
+        parallelism: 5
+
+# do not edit after this line
