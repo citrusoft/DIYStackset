@@ -24,7 +24,7 @@ variable "tfe_hostname" {
 }
 
 variable "oauth_token_id" {
-  default     = "ot-YF3Y8nWd2uU8MJpR" # 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
+  default     = ""
   description = "Token ID of the VCS Connection (OAuth Connection Token) to use."
   type        = string
 }

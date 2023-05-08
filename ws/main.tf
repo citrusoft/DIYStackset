@@ -26,6 +26,6 @@ variable "organization" {
 variable "token" {
   description = "API token for this organization."
   type        = string
-  default     = "gBVSMR2dzCjIfg.atlasv1.SkxdOWjuJCMZPdZeDLJmbqwED1Yn8voqsdAbhR5NrharZdkvr0EsAWhXEvsrdApl9gg"
+  default     = ""
 }
 
