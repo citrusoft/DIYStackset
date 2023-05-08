@@ -17,7 +17,28 @@ variable "notifications" {
 }
 variable "organization" {
   description = "Name of the organization."
+  type = string
 }
+variable "project_id" {
+  description = "Id of the project."
+  type = string
+}
+
+variable "branch" {
+  description = "Branch name."
+  type        = string
+}
+
+variable "identifier" {
+  description = "github repo id, format: organization/repository."
+  type        = string
+}
+
+variable "oauth_token_id" {
+  description = "Token ID of the VCS Connection (OAuth Connection Token) to use."
+  type        = string
+}
+
 variable "queue_all_runs" {
   description = "Whether all runs should be queued. When set to false, runs triggered by a VCS change will not be queued until at least one run is manually queued."
   default     = true
@@ -41,12 +62,6 @@ variable "trigger_prefixes" {
   description = "List of paths relative to the repository root which describe all locations to be tracked for changes in the workspace."
   default     = null
   type        = list(any)
-}
-variable "vcs_repo" {
-  description = "The VCS repository to configure."
-  default = {
-  }
-  type = map(string)
 }
 variable "working_directory" {
   description = "A relative path that Terraform will execute within. Defaults to the root of your repository."

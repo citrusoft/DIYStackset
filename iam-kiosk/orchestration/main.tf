@@ -12,24 +12,19 @@
 #
 
 
-# resource "tfe_project" "iam-kiosk" {
-#   organization = tfe_organization.citrusoft.name
-#   name = "iam-kiosk"
-# }
-
 provider "tfe" {
   hostname = var.tfe_hostname
   organization = var.organization
 }
 
-# data "tfe_organization" "citrusoft" {
-#   name = var.organization
-# }
+data "tfe_organization" "citrusoft" {
+  name = var.organization
+}
 
-# resource "tfe_organization" "citrusoft" {
-#   name  = var.organization
-#   email = "thunt@citrusoft.org"
-# }
+data "tfe_project" "iam-kiosk" {
+  organization = data.tfe_organization.citrusoft.name
+  name = var.project_name
+}
 
 locals {
   # Use the provided config file path or default to the current dir
@@ -52,16 +47,15 @@ locals {
       policy_env         = account
       queue_all_runs     = true
       auto_apply         = true
-      working_directory  = null
+      working_directory  = "iam-kiosk"
       tf_vars            = {}
       env_vars           = {}
       var_file           = null
       parallelism        = null
       varset             = "AWSAccessKeys"
-      github_org         = "citrusoft" #lookup(ws_val, "github_org", "citrusoft")
-      github_repo        = "DIYStackset" # ws_val.github_repo
-      # read_only_ad_group = ws_val.read_only_ad_group
-      # apply_ad_group     = ws_val.apply_ad_group
+      github_org         = var.github_org
+      github_repo        = var.github_repo
+      github_folders     = [ "${var.github_base_folder}/${account}" ]
       tags               = [ ] # lookup(ws_val, "tags", [])
       terraform_version  = "1.3.6" # lookup(ws_val, "terraform_version", "1.3.6")
       drift_detection    = false # lookup(ws_val, "drift_detection", false)
@@ -69,8 +63,6 @@ locals {
   ])
   # local used to create workspaces, flattened workspaces.
   workspaces = { for ws in local.lws : ws.key => ws }
-  # Makes a unique set of AD groups
-  # teams = toset(concat(local.lws[*].read_only_ad_group, local.lws[*].apply_ad_group))
 }
 
 
@@ -79,7 +71,8 @@ module "workspaces" {
   source            = "./modules/workspaces"
   for_each          = local.workspaces
   name              = each.key
-  organization      = var.organization
+  organization      = data.tfe_organization.citrusoft.name
+  project_id        = data.tfe_project.iam-kiosk.id
   queue_all_runs    = each.value.queue_all_runs
   auto_apply        = each.value.auto_apply
   working_directory = each.value.working_directory
@@ -93,19 +86,17 @@ module "workspaces" {
   drift_detection   = each.value.drift_detection
   # tag_names         = setunion(each.value.tags, [each.value.environment])
   # env_vars          = merge(each.value.env_vars, contains(keys(each.value.env_vars), "TF_CLI_ARGS_plan") ? {} : each.value.var_file != null ? tomap({ TF_CLI_ARGS_plan = "" }) : {}, contains(keys(each.value.env_vars), "TF_CLI_ARGS_apply") ? {} : each.value.parallelism != null ? tomap({ TF_CLI_ARGS_apply = "" }) : {})
-  # vcs_repo = {
-  #   branch             = each.value.branch
-  #   identifier         = "${each.value.github_org}/${each.value.github_repo}"
-  #   ingress_submodules = try(each.value.ingress_submodules, false)
-  #   oauth_token_id     = var.oauth_token_id
-  # }
+  branch             = var.branch
+  identifier         = "${var.github_org}/${var.github_repo}" #"${each.value.github_org}/${each.value.github_repo}"
+  # ingress_submodules = false # try(each.value.ingress_submodules, false)
+  oauth_token_id     = var.oauth_token_id
 }
 
-# resource "null_resource" "list-files" {
+resource "null_resource" "list-files" {
 
-#   provisioner "local-exec" {
-#     command = <<-EOT
-#     find . -type f -print
-#     EOT
-#   }
-# }
+  provisioner "local-exec" {
+    command = <<-EOT
+    find . -type f -print
+    EOT
+  }
+}

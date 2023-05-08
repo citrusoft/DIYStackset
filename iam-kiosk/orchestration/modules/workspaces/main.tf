@@ -26,19 +26,27 @@ resource "tfe_workspace" "this" {
   name                  = var.name
   organization          = var.organization
   tag_names             = [for tag in var.tag_names : lower(tag)]
+
+  project_id            = var.project_id
+  auto_apply            = var.auto_apply
+  # execution_mode        = local.default_execution_mode
+  # agent_pool_id         = data.tfe_agent_pool.pge-agent-pool.id
+  file_triggers_enabled = var.file_triggers_enabled
+  queue_all_runs        = var.queue_all_runs
+  ssh_key_id            = var.ssh_key_id
+  terraform_version     = var.terraform_version
+  trigger_prefixes      = var.trigger_prefixes
+  working_directory     = var.working_directory
+  assessments_enabled   = var.drift_detection
+  speculative_enabled   = true
+  vcs_repo {
+    branch              = var.branch
+    identifier          = var.identifier
+    # ingress_submodules = var.ingress_submodules
+    oauth_token_id      = var.oauth_token_id
+  }
 }
 
-  # project_id =          = "iam-kiosk"
-  # auto_apply            = var.auto_apply
-  # execution_mode        = local.default_execution_mode
-  # file_triggers_enabled = var.file_triggers_enabled
-  # queue_all_runs        = var.queue_all_runs
-  # ssh_key_id            = var.ssh_key_id
-  # terraform_version     = var.terraform_version
-  # trigger_prefixes      = var.trigger_prefixes
-  # working_directory     = var.working_directory
-  # agent_pool_id         = data.tfe_agent_pool.pge-agent-pool.id
-  # assessments_enabled   = var.drift_detection
   # dynamic "vcs_repo" {
   #   for_each = [var.vcs_repo]
   #   content {
