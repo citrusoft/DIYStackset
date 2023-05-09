@@ -72,7 +72,7 @@ locals {
   # role_specifications = { for rspec in local.role_specs : rspec.key => rspec.role_yaml_map}
 
   ###### Read, Parse & Encode User specification
-  user_specs = [ for filename in var.user_file_paths: {
+  user_specs = [ for filename in fileset(path.module, var.user_file_paths): {
     key              = filename
     user_yaml_map    = yamldecode(file(filename))
   }]

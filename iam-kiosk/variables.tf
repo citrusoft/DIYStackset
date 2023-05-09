@@ -42,12 +42,12 @@ variable "aws_role" {
 
 variable "role_file_paths" {
   description = "paths to YAML specification of this federated-role."
-  type        = list(string)
+  type        = string
 }
 
 variable "user_file_paths" {
   description = "paths to YAML specification of this service-account."
-  type        = list(string)
+  type        = string
 }
 
 
