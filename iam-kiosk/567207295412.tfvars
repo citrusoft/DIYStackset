@@ -2,12 +2,9 @@ aws_region       = "us-west-2"
 aws_role         = "Administrator"
 saml_account_num = "782391863272"
 ss_account_num   = "782391863272"
-target_account_id= "123133550781"
-shared_state_bucket = "iam-kiosk-919568423267"
-role_file_paths     = [ "./test/resources/*/federated-roles/*.yaml" ]
-user_file_paths     = [ "./test/resources/*/service-accounts/*.yaml" ]
-# role_file_paths     = [ "./test/resources/123133550781/federated-roles/DEV_Ops.yaml" ]
-# user_file_paths     = [ "./test/resources/123133550781/service-accounts/SVC-DEV-Ops.yaml" ]
+target_account_id= "567207295412"
+role_file_paths     = [ "./orchestration/test/resources/567207295412/federated-roles/*.yaml" ]
+user_file_paths     = [ "./orchestration/test/resources/567207295412/service-accounts/*.yaml" ]
 
 AppID              = "2781"                   #"Identify the application this asset belongs to by its AMPS APP ID.Format = APP-####"
 Environment        = "Dev"                    #Dev, Test, QA, Prod (only one)
