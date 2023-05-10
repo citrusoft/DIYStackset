@@ -18,10 +18,6 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.0"
     }
-    pge = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
   }
 }
 
@@ -37,18 +33,18 @@ provider "aws" {
   }
 }
 
-# provider "aws" {
-#   alias   = "saml"
-#   assume_role {
-#     role_arn = "arn:aws:iam::${var.saml_account_num}:role/${var.aws_role}"
-#   }
-#   region = var.aws_region
-# }
+provider "aws" {
+  alias   = "saml"
+  assume_role {
+    role_arn = "arn:aws:iam::${var.saml_account_num}:role/${var.aws_role}"
+  }
+  region = var.aws_region
+}
 
 
-# data "aws_caller_identity" "saml" {
-#   provider = aws.saml
-# }
+data "aws_caller_identity" "saml" {
+  provider = aws.saml
+}
 
 data "aws_caller_identity" "partner" {
   provider = aws.partner
@@ -70,7 +66,7 @@ locals {
   target_account_id  = var.target_account_id
 
   ### Read, Parse & Encode Role specification
-  role_specs = [ for filename in var.role_file_paths: {
+  role_specs = [ for filename in fileset(path.module, var.role_file_paths): {
     key              = filename
     role_yaml_map    = yamldecode(file(filename))
   }]
@@ -122,7 +118,15 @@ module "service_accounts" {
   inline_policies   = lookup(each.value, "Statement", null) != null ? (
                     [ jsonencode({ "Version" : "2012-10-17", "Statement" : each.value["Statement"] })]
                     ) : ( [] )
-  tags       = merge(module.tags.tags, local.optional_tags)
+  tags       = {
+    AppID              = "2781"
+    Environment        = "Dev"
+    DataClassification = "Internal"
+    CRIS               = "Low"
+    Notify             = ["tahv@pge.com"]
+    Owner              = ["tahv", "def2", "ghi3"]
+    Compliance         = ["None"]
+  }
 }
 
 # module "tags" {
