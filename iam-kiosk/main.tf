@@ -18,6 +18,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.0"
     }
+    pge = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
   }
 }
 
@@ -66,11 +70,11 @@ locals {
   target_account_id  = var.target_account_id
 
   ### Read, Parse & Encode Role specification
-  # role_specs = [ for filename in var.role_file_paths: {
-  #   key              = filename
-  #   role_yaml_map    = yamldecode(file(filename))
-  # }]
-  # role_specifications = { for rspec in local.role_specs : rspec.key => rspec.role_yaml_map}
+  role_specs = [ for filename in var.role_file_paths: {
+    key              = filename
+    role_yaml_map    = yamldecode(file(filename))
+  }]
+  role_specifications = { for rspec in local.role_specs : rspec.key => rspec.role_yaml_map}
 
   ###### Read, Parse & Encode User specification
   user_specs = [ for filename in fileset(path.module, var.user_file_paths): {
@@ -121,15 +125,14 @@ module "service_accounts" {
   tags       = merge(module.tags.tags, local.optional_tags)
 }
 
-module "tags" {
-  source             = "app.terraform.io/pgetech/tags/aws"
-
-  AppID              = local.AppID
-  Environment        = local.Environment
-  DataClassification = local.DataClassification
-  CRIS               = local.CRIS
-  Notify             = local.Notify
-  Owner              = local.Owner
-  Compliance         = local.Compliance
-
-}
+# module "tags" {
+#   source             = "app.terraform.io/pgetech/tags/aws"
+#   version            = "0.0.3"
+#   AppID              = local.AppID
+#   Environment        = local.Environment
+#   DataClassification = local.DataClassification
+#   CRIS               = local.CRIS
+#   Notify             = local.Notify
+#   Owner              = local.Owner
+#   Compliance         = local.Compliance
+# }
