@@ -52,16 +52,17 @@ data "aws_caller_identity" "partner" {
 
 
 locals {
-  # AppID              = var.AppID
-  # Environment        = var.Environment
-  # DataClassification = var.DataClassification
-  # CRIS               = var.CRIS
-  # Notify             = var.Notify
-  # Owner              = var.Owner
-  # Compliance         = var.Compliance
-  # optional_tags      = var.optional_tags
+  AppID              = var.AppID
+  Environment        = var.Environment
+  DataClassification = var.DataClassification
+  CRIS               = var.CRIS
+  Notify             = var.Notify
+  Owner              = var.Owner
+  Compliance         = var.Compliance
+  optional_tags      = var.optional_tags
   aws_region         = var.aws_region
-  # ss_account_num     = var.ss_account_num
+  saml_account_num     = var.saml_account_num
+  ss_account_num     = var.ss_account_num
   target_account_id  = var.target_account_id
 
   ### Read, Parse & Encode Role specification
@@ -117,18 +118,18 @@ module "service_accounts" {
   inline_policies   = lookup(each.value, "Statement", null) != null ? (
                     [ jsonencode({ "Version" : "2012-10-17", "Statement" : each.value["Statement"] })]
                     ) : ( [] )
-  # tags       = merge(module.tags.tags, local.optional_tags)
+  tags       = merge(module.tags.tags, local.optional_tags)
 }
 
-# module "tags" {
-#   source             = "app.terraform.io/pgetech/tags/aws"
+module "tags" {
+  source             = "app.terraform.io/pgetech/tags/aws"
 
-#   AppID              = local.AppID
-#   Environment        = local.Environment
-#   DataClassification = local.DataClassification
-#   CRIS               = local.CRIS
-#   Notify             = local.Notify
-#   Owner              = local.Owner
-#   Compliance         = local.Compliance
+  AppID              = local.AppID
+  Environment        = local.Environment
+  DataClassification = local.DataClassification
+  CRIS               = local.CRIS
+  Notify             = local.Notify
+  Owner              = local.Owner
+  Compliance         = local.Compliance
 
-# }
+}
