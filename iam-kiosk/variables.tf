@@ -19,13 +19,11 @@ variable "target_account_id" {
 variable "ss_account_num" {
   type        = string
   description = "Shared services account number."
-  default = "241689241215" # PGE-SharedServices-Dev
 }
 
 variable "saml_account_num" {
   type        = string
   description = "AWS-SAML Integration account number, mandatory"
-  default = "241689241215" # PGE-SharedServices-Dev
 }
 
 variable "aws_region" {

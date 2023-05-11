@@ -10,8 +10,8 @@ AppID              = "2781"                   #"Identify the application this as
 Environment        = "Dev"                    #Dev, Test, QA, Prod (only one)
 DataClassification = "Internal"               #Public, Internal, Confidential, Restricted, Privileged (only one)
 CRIS               = "Low"                    #"Cyber Risk Impact Score High, Medium, Low (only one)"
-Notify             = ["tahv@pge.com"]         #Who to notify for system failure or maintenance. Should be a group or list of email addresses."
-Owner              = ["tahv", "def2", "ghi3"] #"List three owners of the system, as defined by AMPS Director, Client Owner and IT Leadeg"
-Compliance         = ["None"]                 #Identify assets with compliance requirements SOX, HIPAA, CCPA or None
+Notify             = "tahv@pge.com"           #Who to notify for system failure or maintenance. Should be a group or list of email addresses."
+Owner              = "tahv_j2tw"              #"List three owners of the system, as defined by AMPS Director, Client Owner and IT Leadeg"
+Compliance         = "None"                   #Identify assets with compliance requirements SOX, HIPAA, CCPA or None
 optional_tags = {
 }

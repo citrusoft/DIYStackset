@@ -50,13 +50,13 @@ locals {
       working_directory  = "iam-kiosk"
       tf_vars            = {}
       env_vars           = {}
-      var_file           = null
+      var_file           = "${var.account_file_path}/${account}/${account}.tfvars"
       parallelism        = null
-      varset             = "AWSAccessKeys"
+      varset             = "${account}-vars"
       github_org         = var.github_org
       github_repo        = var.github_repo
       github_folders     = [ "${var.github_base_folder}/${account}" ]
-      tags               = [ ] # lookup(ws_val, "tags", [])
+      tags               = [ "citrusoft", "infrastructure", "iam-kiosk" ] # lookup(ws_val, "tags", [])
       terraform_version  = "1.3.6" # lookup(ws_val, "terraform_version", "1.3.6")
       drift_detection    = false # lookup(ws_val, "drift_detection", false)
     }
@@ -80,16 +80,15 @@ module "workspaces" {
   varset            = each.value.varset
   var_file          = each.value.var_file
   parallelism       = each.value.parallelism
-  tag_names         = [ "environment" ]
+  tag_names         = each.value.tags
   policy_env        = each.value.policy_env
   terraform_version = each.value.terraform_version
   drift_detection   = each.value.drift_detection
-  # tag_names         = setunion(each.value.tags, [each.value.environment])
   # env_vars          = merge(each.value.env_vars, contains(keys(each.value.env_vars), "TF_CLI_ARGS_plan") ? {} : each.value.var_file != null ? tomap({ TF_CLI_ARGS_plan = "" }) : {}, contains(keys(each.value.env_vars), "TF_CLI_ARGS_apply") ? {} : each.value.parallelism != null ? tomap({ TF_CLI_ARGS_apply = "" }) : {})
-  branch             = var.branch
   identifier         = "${var.github_org}/${var.github_repo}" #"${each.value.github_org}/${each.value.github_repo}"
-  # ingress_submodules = false # try(each.value.ingress_submodules, false)
   oauth_token_id     = var.oauth_token_id
+  branch             = var.branch
+  # ingress_submodules = false # try(each.value.ingress_submodules, false)
 }
 
 resource "null_resource" "list-files" {
