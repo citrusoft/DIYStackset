@@ -69,8 +69,8 @@ variable "account_file_path" {
   default     = "./test/resources/"
 }
 
-variable "yamllint_validation_filename" {
-  type        = string
-  description = "File name used for YAMLLint validation"
-  default     = "workspace-validation.sh"
-}
+# variable "yamllint_validation_filename" {
+#   type        = string
+#   description = "File name used for YAMLLint validation"
+#   default     = "workspace-validation.sh"
+# }
