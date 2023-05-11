@@ -23,7 +23,7 @@
 
 # Create the workspace
 resource "tfe_workspace" "this" {
-  name                  = var.name
+  name                  = "ccoe-iam-${var.name}"
   organization          = var.organization
   tag_names             = [for tag in var.tag_names : lower(tag)]
 
@@ -35,7 +35,7 @@ resource "tfe_workspace" "this" {
   queue_all_runs        = var.queue_all_runs
   ssh_key_id            = var.ssh_key_id
   terraform_version     = var.terraform_version
-  trigger_prefixes      = var.trigger_prefixes
+  trigger_patterns      = var.trigger_patterns
   working_directory     = var.working_directory
   assessments_enabled   = var.drift_detection
   speculative_enabled   = true
@@ -75,30 +75,33 @@ resource "tfe_workspace" "this" {
 # }
 
 # Add the workspace id as environment variable
-# resource "tfe_variable" "workspace_id" {
-#   workspace_id = tfe_workspace.this.id
-#   category     = "env"
-#   key          = "TF_VAR_workspace_id"
-#   value        = tfe_workspace.this.id
-# }
+resource "tfe_variable" "workspace_id" {
+  workspace_id = tfe_workspace.this.id
+  category     = "env"
+  key          = "TF_VAR_workspace_id"
+  value        = tfe_workspace.this.id
+}
+
 # Add the workspace name as environment variable
-# resource "tfe_variable" "workspace_name" {
-#   workspace_id = tfe_workspace.this.id
-#   category     = "env"
-#   key          = "TF_VAR_workspace_name"
-#   value        = tfe_workspace.this.name
-# }
+resource "tfe_variable" "workspace_name" {
+  workspace_id = tfe_workspace.this.id
+  category     = "env"
+  key          = "TF_VAR_workspace_name"
+  value        = tfe_workspace.this.name
+}
 
 # Get the varset_id. Varset must already exist.
-# data "tfe_variable_set" "this" {
-#   name         = var.varset
-#   organization = var.organization
-# }
+data "tfe_variable_set" "this" {
+  name         = var.varset
+  organization = var.organization
+}
+
 # Attach varset to workspace
 # resource "tfe_workspace_variable_set" "attach_varset" {
 #   variable_set_id = data.tfe_variable_set.this.id
 #   workspace_id    = tfe_workspace.this.id
 # }
+
 # Attach policy set to workspace
 # data "tfe_policy_set" "this" {
 #   name         = "${var.policy_env}-policy-set"
@@ -108,8 +111,9 @@ resource "tfe_workspace" "this" {
 #   policy_set_id = data.tfe_policy_set.this.id
 #   workspace_id  = tfe_workspace.this.id
 # }
-# # Python is no longer required to attach varset to workspace
-# # Use Python to attach existing varsets to workspaces
+
+# Python is no longer required to attach varset to workspace
+# Use Python to attach existing varsets to workspaces
 # resource "null_resource" "add-varset" {
 #   triggers = { update_varset = var.varset }
 #   provisioner "local-exec" {
@@ -119,6 +123,7 @@ resource "tfe_workspace" "this" {
 #     EOT
 #   }
 # }
+
 ## This is defective at the moment. Cannot add runtask to workspace from tfc only Prisma.
 # Use Python to attach existing runtask to workspaces
 # resource "null_resource" "add-runtask" {

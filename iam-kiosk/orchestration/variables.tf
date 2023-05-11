@@ -22,7 +22,7 @@ variable "github_repo" {
   default     = "DIYStackset"
 }
 
-variable "github_base_folder" {
+variable "resource_base_folder" {
   description = "Relative path to folder of account dirs."
   type        = string
   default     = "iam-kiosk/orchestration/test/resources/"

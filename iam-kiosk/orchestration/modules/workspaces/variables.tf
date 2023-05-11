@@ -3,7 +3,7 @@ variable "auto_apply" {
   default     = false
 }
 variable "file_triggers_enabled" {
-  description = "Whether to filter runs based on the changed files in a VCS push. If enabled, the working directory and trigger prefixes describe a set of paths which must contain changes for a VCS push to trigger a run. If disabled, any push will trigger a run."
+  description = "Whether to filter runs based on the changed files in a VCS push. If enabled, the working directory and trigger patterns describe a set of paths which must contain changes for a VCS push to trigger a run. If disabled, any push will trigger a run."
   default     = true
 }
 variable "name" {
@@ -58,7 +58,7 @@ variable "terraform_version" {
   default     = null
   type        = string
 }
-variable "trigger_prefixes" {
+variable "trigger_patterns" {
   description = "List of paths relative to the repository root which describe all locations to be tracked for changes in the workspace."
   default     = null
   type        = list(any)
