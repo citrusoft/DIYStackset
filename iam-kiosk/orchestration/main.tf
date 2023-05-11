@@ -29,7 +29,7 @@ data "tfe_project" "iam-kiosk" {
 locals {
   # Use the provided config file path or default to the current dir
 
-  resource_files = fileset(var.account_file_path, "*/*/*.yaml")
+  resource_files = fileset(var.relative_resource_folder, "*/*/*.yaml")
 
   # TODO make a set of AWS accts to prevent duplicates #
   account_set = toset([ 
@@ -47,15 +47,15 @@ locals {
       policy_env         = account
       queue_all_runs     = true
       auto_apply         = true
-      working_directory  = "iam-kiosk"
+      working_directory  = "iam-kiosk/pipeline"
       tf_vars            = {}
       env_vars           = {}
-      var_file           = "${var.account_file_path}/${account}/${account}.tfvars"
+      var_file           = "${var.base_resource_folder}/${account}/${account}.tfvars"
       parallelism        = null
       varset             = "${account}-vars"
       github_org         = var.github_org
       github_repo        = var.github_repo
-      trigger_patterns   = [ "${var.resource_base_folder}${account}/**/*" ]
+      trigger_patterns   = [ "${var.base_resource_folder}/${account}/**/*", "iam-kiosk/pipeline/**/*" ]
       tags               = [ "citrusoft", "infrastructure", "iam-kiosk" ] # lookup(ws_val, "tags", [])
       terraform_version  = "1.3.6" # lookup(ws_val, "terraform_version", "1.3.6")
       drift_detection    = false # lookup(ws_val, "drift_detection", false)
@@ -92,11 +92,11 @@ module "workspaces" {
   # ingress_submodules = false # try(each.value.ingress_submodules, false)
 }
 
-resource "null_resource" "list-files" {
+# resource "null_resource" "list-files" {
 
-  provisioner "local-exec" {
-    command = <<-EOT
-    find . -type f -print
-    EOT
-  }
-}
+#   provisioner "local-exec" {
+#     command = <<-EOT
+#     find . -type f -print
+#     EOT
+#   }
+# }

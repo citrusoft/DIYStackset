@@ -67,19 +67,19 @@ locals {
   Compliance         = var.Compliance
   optional_tags      = var.optional_tags
   aws_region         = var.aws_region
-  saml_account_num     = var.saml_account_num
+  saml_account_num   = var.saml_account_num
   ss_account_num     = var.ss_account_num
   target_account_id  = var.target_account_id
 
   ### Read, Parse & Encode Role specification
-  role_specs = [ for filename in fileset(path.module, var.role_file_paths): {
+  role_specs = [ for filename in fileset(path.module, "./orchestration/test/resources/${var.target_account_id}/federated-roles/*.yaml"): {
     key              = filename
     role_yaml_map    = yamldecode(file(filename))
   }]
   role_specifications = { for rspec in local.role_specs : rspec.key => rspec.role_yaml_map}
 
   ###### Read, Parse & Encode User specification
-  user_specs = [ for filename in fileset(path.module, var.user_file_paths): {
+  user_specs = [ for filename in fileset(path.module, "./orchestration/test/resources/${var.target_account_id}/service-acounts/*.yaml"): {
     key              = filename
     user_yaml_map    = yamldecode(file(filename))
   }]

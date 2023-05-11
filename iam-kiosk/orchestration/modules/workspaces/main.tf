@@ -91,9 +91,14 @@ resource "tfe_variable" "workspace_name" {
 }
 
 # Get the varset_id. Varset must already exist.
-data "tfe_variable_set" "this" {
+data "tfe_variable_set" "varset" {
   name         = var.varset
   organization = var.organization
+}
+
+resource "tfe_workspace_variable_set" "associate" {
+  workspace_id    = tfe_workspace.this.id
+  variable_set_id = data.tfe_variable_set.varset.id
 }
 
 # Attach varset to workspace

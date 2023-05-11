@@ -39,16 +39,6 @@ variable "aws_role" {
   default     = "CloudAdmin"
 }
 
-variable "role_file_paths" {
-  description = "paths to YAML specification of this federated-role."
-  type        = string
-}
-
-variable "user_file_paths" {
-  description = "paths to YAML specification of this service-account."
-  type        = string
-}
-
 variable "tags" {
   description = "tags"
   type        = map(string)

@@ -22,10 +22,16 @@ variable "github_repo" {
   default     = "DIYStackset"
 }
 
-variable "resource_base_folder" {
-  description = "Relative path to folder of account dirs."
+variable "base_resource_folder" {
+  description = "Path to resources relative to repo base folder."
   type        = string
-  default     = "iam-kiosk/orchestration/test/resources/"
+  default     = "iam-kiosk/resources"
+}
+
+variable "relative_resource_folder" {
+  description = "Path to resources relative to working directory."
+  type        = string
+  default     = "../resources"
 }
 
 variable "branch" {
@@ -62,15 +68,3 @@ variable "root_workspace" {
   type        = string
   default     = "orchestration"
 }
-
-variable "account_file_path" {
-  description = "paths to YAML specification of this federated-role."
-  type        = string
-  default     = "./test/resources/"
-}
-
-# variable "yamllint_validation_filename" {
-#   type        = string
-#   description = "File name used for YAMLLint validation"
-#   default     = "workspace-validation.sh"
-# }
