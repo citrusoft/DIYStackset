@@ -72,7 +72,7 @@ variable "DataClassification" {
 }
 
 variable "Compliance" {
-  type        = list(string)
+  type        = string
   description = "Compliance	Identify assets with compliance requirements (SOX, HIPAA, etc.) Note: not adding NERC workloads to cloud"
 }
 
@@ -82,12 +82,12 @@ variable "CRIS" {
 }
 
 variable "Notify" {
-  type        = list(string)
+  type        = string
   description = "Who to notify for system failure or maintenance. Should be a group or list of email addresses."
 }
 
 variable "Owner" {
-  type        = list(string)
+  type        = string
   description = "List three owners of the system, as defined by AMPS Director, Client Owner and IT Leadeg LANID1_LANID2_LANID3"
 }
 

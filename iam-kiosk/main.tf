@@ -23,6 +23,12 @@ terraform {
 
 provider "aws" {
   region = "${local.aws_region}"
+  default_tags {
+    tags = {
+      Environment = "Test"
+      Name        = "Provider Tag"
+    }
+  }
 }
 
 provider "aws" {
@@ -78,28 +84,37 @@ locals {
     user_yaml_map    = yamldecode(file(filename))
   }]
   user_specifications = { for uspec in local.user_specs : uspec.key => uspec.user_yaml_map}
+  tags = {
+    AppID              = var.AppID
+    Environment        = var.Environment
+    DataClassification = var.DataClassification
+    CRIS               = var.CRIS
+    Notify             = var.Notify
+    Owner              = var.Owner
+    Compliance         = var.Compliance
+  }
 }
 
 #################################
 # FEDERATED ROLES Specification
 # PARTNER & SAML Role Creation
 #################################
-# module "federated_roles" {
-#   source = "./modules/federated-roles"
-#   providers = {
-#     aws.partner = aws.partner
-#     aws.saml = aws.saml
-#    }
+module "federated_roles" {
+  source = "./modules/federated-roles"
+  providers = {
+    aws.partner = aws.partner
+    aws.saml = aws.saml
+   }
 
-#   for_each          = local.role_specifications
-#   account_num       = regex("[0-9]{12}", each.key)  # parse AWS acct #
-#   name              = each.value["Name"]
-#   managed_policies  = lookup(each.value, "ManagedPolicyArns", [])
-#   inline_policies   = lookup(each.value, "Statement", null) != null ? (
-#                     [ jsonencode({ "Version" : "2012-10-17", "Statement" : each.value["Statement"] })]
-#                     ) : ( [] )
-#   # tags              = merge(module.tags.tags, local.optional_tags)
-# }
+  for_each          = local.role_specifications
+  account_num       = regex("[0-9]{12}", each.key)  # parse AWS acct #
+  name              = each.value["Name"]
+  managed_policies  = lookup(each.value, "ManagedPolicyArns", [])
+  inline_policies   = lookup(each.value, "Statement", null) != null ? (
+                    [ jsonencode({ "Version" : "2012-10-17", "Statement" : each.value["Statement"] })]
+                    ) : ( [] )
+  tags              = merge(local.tags, local.optional_tags)
+}
 
 ###################################
 # SERVICE ACCOUNT Specification
@@ -118,15 +133,7 @@ module "service_accounts" {
   inline_policies   = lookup(each.value, "Statement", null) != null ? (
                     [ jsonencode({ "Version" : "2012-10-17", "Statement" : each.value["Statement"] })]
                     ) : ( [] )
-  tags       = {
-    AppID              = "2781"
-    Environment        = "Dev"
-    DataClassification = "Internal"
-    CRIS               = "Low"
-    Notify             = ["tahv@pge.com"]
-    Owner              = ["tahv", "def2", "ghi3"]
-    Compliance         = ["None"]
-  }
+  tags              = merge(local.tags, local.optional_tags)
 }
 
 # module "tags" {
