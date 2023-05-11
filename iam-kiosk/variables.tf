@@ -19,6 +19,7 @@ variable "target_account_id" {
 variable "ss_account_num" {
   type        = string
   description = "Shared services account number."
+  default = ""
 }
 
 variable "saml_account_num" {
