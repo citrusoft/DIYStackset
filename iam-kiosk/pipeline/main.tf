@@ -72,14 +72,14 @@ locals {
   target_account_id  = var.target_account_id
 
   ### Read, Parse & Encode Role specification
-  role_specs = [ for filename in fileset(path.module, "./orchestration/test/resources/${var.target_account_id}/federated-roles/*.yaml"): {
+  role_specs = [ for filename in fileset(path.module, "../resources/${var.target_account_id}/federated-roles/*.yaml"): {
     key              = filename
     role_yaml_map    = yamldecode(file(filename))
   }]
   role_specifications = { for rspec in local.role_specs : rspec.key => rspec.role_yaml_map}
 
   ###### Read, Parse & Encode User specification
-  user_specs = [ for filename in fileset(path.module, "./orchestration/test/resources/${var.target_account_id}/service-acounts/*.yaml"): {
+  user_specs = [ for filename in fileset(path.module, "../resources/${var.target_account_id}/service-acounts/*.yaml"): {
     key              = filename
     user_yaml_map    = yamldecode(file(filename))
   }]
@@ -134,6 +134,15 @@ module "service_accounts" {
                     [ jsonencode({ "Version" : "2012-10-17", "Statement" : each.value["Statement"] })]
                     ) : ( [] )
   tags              = merge(local.tags, local.optional_tags)
+}
+
+resource "null_resource" "list-files" {
+
+  provisioner "local-exec" {
+    command = <<-EOT
+    find . -type f -print
+    EOT
+  }
 }
 
 # module "tags" {
