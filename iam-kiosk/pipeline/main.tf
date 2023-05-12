@@ -136,14 +136,14 @@ module "service_accounts" {
   tags              = merge(local.tags, local.optional_tags)
 }
 
-resource "null_resource" "list-files" {
+# resource "null_resource" "list-files" {
 
-  provisioner "local-exec" {
-    command = <<-EOT
-    find .. -type f -print
-    EOT
-  }
-}
+#   provisioner "local-exec" {
+#     command = <<-EOT
+#     find .. -type f -print
+#     EOT
+#   }
+# }
 
 # module "tags" {
 #   source             = "app.terraform.io/pgetech/tags/aws"
