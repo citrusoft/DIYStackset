@@ -140,7 +140,7 @@ resource "null_resource" "list-files" {
 
   provisioner "local-exec" {
     command = <<-EOT
-    find . -type f -print
+    find .. -type f -print
     EOT
   }
 }
