@@ -79,7 +79,7 @@ locals {
   role_specifications = { for rspec in local.role_specs : rspec.key => rspec.role_yaml_map}
 
   ###### Read, Parse & Encode User specification
-  user_specs = [ for filename in fileset(path.module, "../resources/${var.target_account_id}/service-acounts/*.yaml"): {
+  user_specs = [ for filename in fileset(path.module, "../resources/${var.target_account_id}/service-accounts/*.yaml"): {
     key              = filename
     user_yaml_map    = yamldecode(file(filename))
   }]
@@ -134,7 +134,7 @@ module "service_accounts" {
   inline_policies   = lookup(each.value, "Statement", null) != null ? (
                     [ jsonencode({ "Version" : "2012-10-17", "Statement" : each.value["Statement"] })]
                     ) : ( [] )
-  tags              = merge(local.tags, local.optional_tags)
+  tags              = merge(merge(local.tags, local.optional_tags), lookup(each.value, "Tags", {})) # Precedence = yaml, optional, default
 }
 
 # resource "null_resource" "list-files" {
