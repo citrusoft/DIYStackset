@@ -143,7 +143,7 @@ resource "aws_iam_role_policy" "assume_partner_policy" {
       {
         Effect   = "Allow",
         Action   = "sts:AssumeRole",
-        Resource = "arn:aws:iam::${data.aws_caller_identity.partner.account_id}:role/${aws_iam_role.saml_integration_role.name}"
+        Resource = "arn:aws:iam::${data.aws_caller_identity.partner.account_id}:role/${var.name}"
     }]
   })
 }
