@@ -145,15 +145,3 @@ module "service_accounts" {
 #     EOT
 #   }
 # }
-
-# module "tags" {
-#   source             = "app.terraform.io/pgetech/tags/aws"
-#   version            = "0.0.3"
-#   AppID              = local.AppID
-#   Environment        = local.Environment
-#   DataClassification = local.DataClassification
-#   CRIS               = local.CRIS
-#   Notify             = local.Notify
-#   Owner              = local.Owner
-#   Compliance         = local.Compliance
-# }
