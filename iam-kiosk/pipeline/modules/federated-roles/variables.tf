@@ -70,13 +70,13 @@ variable "max_session_duration" {
 }
 
 variable "tags" {
-  description = "tags"
+  description = "PGE's standard AWS tags."
   type        = map(string)
   default     = {}
 }
 
 variable "optional_tags" {
-  description = "Optional_tags"
+  description = "Additional tags."
   type        = map(string)
   default     = {}
 }

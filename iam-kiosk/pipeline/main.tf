@@ -84,6 +84,7 @@ locals {
     user_yaml_map    = yamldecode(file(filename))
   }]
   user_specifications = { for uspec in local.user_specs : uspec.key => uspec.user_yaml_map}
+  # Save any Default tags from the workspace/commandline.
   tags = {
     AppID              = var.AppID
     Environment        = var.Environment
@@ -113,7 +114,7 @@ module "federated_roles" {
   inline_policies   = lookup(each.value, "Statement", null) != null ? (
                     [ jsonencode({ "Version" : "2012-10-17", "Statement" : each.value["Statement"] })]
                     ) : ( [] )
-  tags              = merge(local.tags, local.optional_tags)
+  tags              = merge(merge(local.tags, local.optional_tags), lookup(each.value, "Tags", {})) # Precedence = yaml, optional, default
 }
 
 ###################################
