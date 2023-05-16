@@ -103,10 +103,6 @@ variable "parallelism" {
   default     = null
 }
 
-variable "policy_env" {
-  description = "Value from the yaml config file to apply environment based policy set."
-  type        = string
-}
 variable "drift_detection" {
   description = "set to true to detect changes to infra"
 }

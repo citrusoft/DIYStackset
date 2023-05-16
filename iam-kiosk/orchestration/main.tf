@@ -29,7 +29,7 @@ data "tfe_project" "iam-kiosk" {
 locals {
   # Use the provided config file path or default to the current dir
 
-  resource_files = fileset(var.relative_resource_folder, "*/*/*.yaml")
+  resource_files = fileset("${var.resource_path}", "*/*/*.yaml")
 
   # TODO make a set of AWS accts to prevent duplicates #
   account_set = toset([ 
@@ -38,29 +38,23 @@ locals {
   ])
 
   # flatten yaml data for resource creation
-  lws = flatten([
+  lws = [
     for account in local.account_set: {
       key                = account
-      account            = account # vars.account
+      account            = account
       branch             = "tfe-workspaces" # vars.branch
-      environment        = "tfc-dev"
-      policy_env         = account
       queue_all_runs     = true
       auto_apply         = true
       working_directory  = "iam-kiosk/pipeline"
-      tf_vars            = {}
-      env_vars           = {}
-      var_file           = "${var.base_resource_folder}/${account}/${account}.tfvars"
-      parallelism        = null
       varset             = "${account}-vars"
       github_org         = var.github_org
       github_repo        = var.github_repo
-      trigger_patterns   = [ "${var.base_resource_folder}/${account}/**/*", "iam-kiosk/pipeline/**/*" ]
-      tags               = [ "citrusoft", "infrastructure", "iam-kiosk" ] # lookup(ws_val, "tags", [])
-      terraform_version  = "1.3.6" # lookup(ws_val, "terraform_version", "1.3.6")
-      drift_detection    = false # lookup(ws_val, "drift_detection", false)
+      trigger_patterns   = [ "${var.resource_folder}/${account}/**/*", "iam-kiosk/pipeline/**/*" ]
+      ws_tags            = [ "ccoe", "cscoe", "iam-kiosk" ] # lookup(ws_val, "tags", [])
+      terraform_version  = var.terraform_version
+      drift_detection    = var.drift_detection
     }
-  ])
+  ]
   # local used to create workspaces, flattened workspaces.
   workspaces = { for ws in local.lws : ws.key => ws }
 }
@@ -76,12 +70,8 @@ module "workspaces" {
   queue_all_runs    = each.value.queue_all_runs
   auto_apply        = each.value.auto_apply
   working_directory = each.value.working_directory
-  tf_vars           = each.value.tf_vars
   varset            = each.value.varset
-  var_file          = each.value.var_file
-  parallelism       = each.value.parallelism
-  tag_names         = each.value.tags
-  policy_env        = each.value.policy_env
+  tag_names         = each.value.ws_tags
   terraform_version = each.value.terraform_version
   drift_detection   = each.value.drift_detection
   trigger_patterns  = each.value.trigger_patterns
