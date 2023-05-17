@@ -10,11 +10,6 @@ variable "name" {
   description = "Configuration File Name of the workspace"
   type        = string
 }
-variable "notifications" {
-  description = "Map of `tfe_notification_configurations` to define in the workspace."
-  default     = {}
-  type        = map(object({ configuration = map(string), triggers = list(string) }))
-}
 variable "organization" {
   description = "Name of the organization."
   type = string
@@ -43,15 +38,6 @@ variable "queue_all_runs" {
   description = "Whether all runs should be queued. When set to false, runs triggered by a VCS change will not be queued until at least one run is manually queued."
   default     = true
   type        = bool
-}
-variable "ssh_key_id" {
-  description = "The ID of an SSH key to assign to the workspace."
-  default     = null
-}
-variable "team_access" {
-  description = "Associate teams to permissions on the workspace."
-  default     = {}
-  type        = map(string)
 }
 variable "terraform_version" {
   description = "The version of Terraform to use for this workspace."
@@ -94,12 +80,6 @@ variable "varset" {
 variable "var_file" {
   description = "Var file name for env_variables."
   type        = string
-  default     = null
-}
-
-variable "parallelism" {
-  description = "Parallelism for env_variables."
-  type        = number
   default     = null
 }
 

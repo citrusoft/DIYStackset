@@ -28,7 +28,9 @@ resource "aws_iam_user" "service_account" {
   provider = aws.partner
   # name     = "SVC-A${trimprefix(var.tags["AppID"], "APP-")}-${var.tags["Environment"]}-${var.name}"
   name     = startswith("${var.name}", "SVC-") ? "${var.name}" : "SVC-${var.name}"
-  tags     = merge(var.tags, var.optional_tags)
+  tags     = merge(merge(var.tags, var.optional_tags), {
+                workspace = "ccoe-iam-${var.account_num}"
+              })
 }
 
 #######################################

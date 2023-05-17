@@ -59,7 +59,9 @@ resource "aws_iam_role" "partner_role" {
 
   force_detach_policies      = var.force_detach_policies
   max_session_duration       = var.max_session_duration
-  tags                       = var.tags
+  tags     = merge(merge(var.tags, var.optional_tags), {
+                workspace = "ccoe-iam-${var.account_num}"
+              })
 }
 
 #######################################
@@ -101,7 +103,9 @@ resource "aws_iam_role" "saml_integration_role" {
 
   force_detach_policies      = var.force_detach_policies
   max_session_duration       = var.max_session_duration
-  tags                       = var.tags
+  tags     = merge(merge(var.tags, var.optional_tags), {
+                workspace = "ccoe-iam-${var.auth_account_num}"
+              })
 }
 
 #########################################

@@ -8,7 +8,7 @@
 #  Author      : Jacob Taunton (j2tw@pge.com)
 #  Description : creates the workspace resources in TFC
 #
-# locals {
+locals {
   # Only allowing execution mode for TFC agent, no remote or local.
   # default_execution_mode = "agent"
   # agent_pool_name        = "pge-tfc-agents"
@@ -19,26 +19,24 @@
 # data "tfe_agent_pool" "pge-agent-pool" {
 #   name         = local.agent_pool_name
 #   organization = var.organization
-# }
+  tag_names = var.tag_names
+}
 
 # Create the workspace
 resource "tfe_workspace" "this" {
   name                  = "ccoe-iam-${var.name}"
   organization          = var.organization
-  tag_names             = [for tag in var.tag_names : lower(tag)]
-
   project_id            = var.project_id
   auto_apply            = var.auto_apply
   # execution_mode        = local.default_execution_mode
   # agent_pool_id         = data.tfe_agent_pool.pge-agent-pool.id
   file_triggers_enabled = var.file_triggers_enabled
   queue_all_runs        = var.queue_all_runs
-  ssh_key_id            = var.ssh_key_id
   terraform_version     = var.terraform_version
   trigger_patterns      = var.trigger_patterns
   working_directory     = var.working_directory
   assessments_enabled   = var.drift_detection
-  speculative_enabled   = true
+  tag_names             = [for tag in var.tag_names : lower(tag)]
   vcs_repo {
     branch              = var.branch
     identifier          = var.identifier
