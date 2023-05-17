@@ -39,22 +39,6 @@ variable "aws_role" {
   default     = "CloudAdmin"
 }
 
-variable "tfe_hostname" {
-  description = "The Terraform Enterprise hostname to connect to. Defaults to `app.terraform.io`. Can be overridden by setting the `TFE_HOSTNAME` environment variable."
-  default     = "app.terraform.io"
-  type        = string
-}
-
-variable "organization" {
-  description = "Name of the organization."
-  type        = string
-}
-
-variable "project_name" {
-  description = "Name of the project."
-  type        = string
-}
-
 variable "tags" {
   description = "tags"
   type        = map(string)
