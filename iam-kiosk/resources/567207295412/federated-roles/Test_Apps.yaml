@@ -1,5 +1,13 @@
 ---
 Name: Test_Apps
+Tags:
+  AppID: APP-3137
+  DataClassification: Internal
+  Environment: Dev
+  Owner: S1KO_M61W_M61W
+  CRIS: Low
+  Compliance: None
+  Notify: m61w@abc.com
 Statement:
   - Sid: "GlueS3"
     Action:
