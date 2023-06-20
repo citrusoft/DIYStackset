@@ -6,7 +6,7 @@
 # Filename    : cscoe-iam-kiosk/modules/federated-roles
 # Date        : Mar 16, 2023
 # Author      : Tommy Hunt (tahv@pge.com)
-# Description : iam roles creation with policies from yaml files.
+# Description : iam partner-roles creation with policies from yaml files.
 #
 
 terraform {
@@ -16,14 +16,14 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 4.0"
-      configuration_aliases = [ aws.saml, aws.partner ]
+      configuration_aliases = [ aws.partner ]
     }
   }
 }
 
-data "aws_caller_identity" "saml" {
-  provider = aws.saml
-}
+# data "aws_caller_identity" "saml" {
+#   provider = aws.saml
+# }
 
 data "aws_caller_identity" "partner" {
   provider = aws.partner
@@ -41,7 +41,8 @@ data "aws_iam_policy_document" "trust_saml2assume_partner_role" {
     ]
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.saml.account_id}:root"]
+      identifiers = ["arn:aws:iam::${var.auth_account_num}:root"]
+      # identifiers = ["arn:aws:iam::${data.aws_caller_identity.saml.account_id}:root"]
     }
   }
 }
@@ -85,69 +86,4 @@ resource "aws_iam_role_policy_attachment" "partner_managed_policy" {
   count      = length(var.managed_policies)
   role       = aws_iam_role.partner_role.name
   policy_arn = element(var.managed_policies, count.index)
-}
-
-############
-# SAML-Role
-############
-resource "aws_iam_role" "saml_integration_role" {
-  provider                   = aws.saml
-
-  # name                       = "AWS-A${trimprefix(var.tags["AppID"], "APP-")}-${var.tags["Environment"]}-${var.name}"
-  name                       = "AWS-${var.name}"
-  path                       = var.path
-  description                = var.description
-
-  assume_role_policy         = data.aws_iam_policy_document.trust_saml_policy.json
-  managed_policy_arns        = var.managed_policies
-
-  force_detach_policies      = var.force_detach_policies
-  max_session_duration       = var.max_session_duration
-  tags     = merge(merge(var.tags, var.optional_tags), {
-                workspace = "ccoe-iam-${var.auth_account_num}"
-              })
-}
-
-#########################################
-# Trust PingFederate to Assume SAML-Role
-#########################################
-data "aws_iam_policy_document" "trust_saml_policy" {
-  provider = aws.saml
-
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "Federated"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.saml.account_id}:saml-provider/${var.saml_provider}"]
-    }
-    condition {
-      test     = "StringEquals"
-      variable = "SAML:aud"
-      values   = [
-        "https://signin.aws.amazon.com/saml"
-      ]
-    }
-    actions = [
-      "sts:AssumeRoleWithSAML"
-    ]
-  }
-}
-
-#########################################
-# Allow SAML-Role to Assume Partner-Role
-#########################################
-resource "aws_iam_role_policy" "assume_partner_policy" {
-  provider = aws.saml
-
-  name   = "assume-${var.name}-policy"
-  role   = aws_iam_role.saml_integration_role.id
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect   = "Allow",
-        Action   = "sts:AssumeRole",
-        Resource = "arn:aws:iam::${data.aws_caller_identity.partner.account_id}:role/${var.name}"
-    }]
-  })
 }

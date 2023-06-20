@@ -40,11 +40,11 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias   = "saml"
+  alias  = "saml"
+  region = var.aws_region
   assume_role {
     role_arn = "arn:aws:iam::${var.saml_account_num}:role/${var.aws_role}"
   }
-  region = var.aws_region
 }
 
 
@@ -98,17 +98,17 @@ locals {
 
 #################################
 # FEDERATED ROLES Specification
-# PARTNER & SAML Role Creation
+# PARTNER Role Creation
 #################################
 module "federated_roles" {
   source = "./modules/federated-roles"
   providers = {
     aws.partner = aws.partner
-    aws.saml = aws.saml
-   }
+  }
 
   for_each          = local.role_specifications
   account_num       = regex("[0-9]{12}", each.key)  # parse AWS acct #
+  auth_account_num  = var.saml_account_num
   name              = each.value["Name"]
   managed_policies  = lookup(each.value, "ManagedPolicyArns", [])
   inline_policies   = lookup(each.value, "Statement", null) != null ? (
@@ -116,6 +116,37 @@ module "federated_roles" {
                     ) : ( [] )
   tags              = merge(merge(local.tags, local.optional_tags), lookup(each.value, "Tags", {})) # Precedence = yaml, optional, default
 }
+
+#################################
+# FEDERATED ROLES Specification
+# SAML Role Creation
+#################################
+module "saml_roles" {
+  source = "./modules/saml-roles"
+  providers = {
+    aws.saml = aws.saml
+  }
+  
+  for_each          = local.role_specifications
+  account_num       = regex("[0-9]{12}", each.key)  # parse AWS acct #
+  auth_account_num  = var.saml_account_num
+  name              = each.value["Name"]
+  managed_policies  = lookup(each.value, "ManagedPolicyArns", [])
+  inline_policies   = lookup(each.value, "Statement", null) != null ? (
+                    [ jsonencode({ "Version" : "2012-10-17", "Statement" : each.value["Statement"] })]
+                    ) : ( [] )
+  tags              = merge(merge(local.tags, local.optional_tags), lookup(each.value, "Tags", {})) # Precedence = yaml, optional, default
+  #############################################
+  # Why is this explicit dependency necessary?
+  # Given the saml-role's policy to assume the partner-role is tightly-coupled
+  # it requires that the partner-role exists prior to its creation.
+  # Whereas the trust-relationship in the reverse direction is loosely coupled
+  # delegated to IAM which enforces the SAML-role's policies.  
+  #############################################
+  depends_on = [
+    module.federated_roles
+  ]
+ }
 
 ###################################
 # SERVICE ACCOUNT Specification
