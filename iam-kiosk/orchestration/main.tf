@@ -42,15 +42,16 @@ locals {
     for account in local.account_set: {
       key                = account
       account            = account
-      branch             = "tfe-workspaces" # vars.branch
+      branch             = var.branch
       queue_all_runs     = true
       auto_apply         = true
-      working_directory  = "iam-kiosk/pipeline"
+      # This directory changes if its the SAML account-workspace.
+      working_directory  = account == var.saml_account_num ? "iam-kiosk/partner-pipeline" : "iam-kiosk/saml-pipeline" 
       varset             = "${account}-vars"
       github_org         = var.github_org
       github_repo        = var.github_repo
-      trigger_patterns   = [ "${var.resource_folder}/${account}/**/*", "iam-kiosk/pipeline/**/*" ]
-      ws_tags            = [ "ccoe", "cscoe", "iam-kiosk" ] # lookup(ws_val, "tags", [])
+      trigger_patterns   = [ "${var.resource_folder}/${account}/**/*", "iam-kiosk/saml-pipeline/**/*", "iam-kiosk/partner-pipeline/**/*" ]
+      ws_tags            = var.tags
       terraform_version  = var.terraform_version
       drift_detection    = var.drift_detection
     }
@@ -81,12 +82,3 @@ module "workspaces" {
   branch            = var.branch
   # ingress_submodules = false # try(each.value.ingress_submodules, false)
 }
-
-# resource "null_resource" "list-files" {
-
-#   provisioner "local-exec" {
-#     command = <<-EOT
-#     find . -type f -print
-#     EOT
-#   }
-# }

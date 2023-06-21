@@ -61,6 +61,18 @@ variable "project_name" {
 }
 
 variable "root_workspace" {
-  description = "Root of all the workspaces."
+  description = "Name the root of all the workspaces."
   type        = string
+  default        = "orchestration"
+}
+
+variable "saml_account_num" {
+  type        = string
+  description = "AWS-SAML Integration account number, mandatory"
+}
+
+variable "tags" {
+  description = "These are TFC workspace tags, not AWS tags."
+  type        = list(string)
+  default     = []
 }
