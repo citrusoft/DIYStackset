@@ -3,8 +3,8 @@ aws_role         = "Administrator"
 saml_account_num = "782391863272"
 ss_account_num   = "782391863272"
 target_account_id= "930856341568"
-role_file_paths     = "./orchestration/resources/930856341568/federated-roles/*.yaml"
-user_file_paths     = "./orchestration/resources/930856341568/service-accounts/*.yaml"
+role_file_paths     = "./resources/930856341568/federated-roles/*.yaml"
+user_file_paths     = "./resources/930856341568/service-accounts/*.yaml"
 
 AppID              = "2781"                   #"Identify the application this asset belongs to by its AMPS APP ID.Format = APP-####"
 Environment        = "Dev"                    #Dev, Test, QA, Prod (only one)

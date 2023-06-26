@@ -46,7 +46,7 @@ locals {
       queue_all_runs     = true
       auto_apply         = true
       # This directory changes if its the SAML account-workspace.
-      working_directory  = account == var.saml_account_num ? "iam-kiosk/partner-pipeline" : "iam-kiosk/saml-pipeline" 
+      working_directory  = account != var.saml_account_num ? "iam-kiosk/partner-pipeline" : "iam-kiosk/saml-pipeline" 
       varset             = "${account}-vars"
       github_org         = var.github_org
       github_repo        = var.github_repo
@@ -82,3 +82,4 @@ module "workspaces" {
   branch            = var.branch
   # ingress_submodules = false # try(each.value.ingress_submodules, false)
 }
+
