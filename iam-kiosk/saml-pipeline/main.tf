@@ -72,7 +72,7 @@ locals {
   target_account_id  = var.target_account_id
 
   ### Read, Parse & Encode Role specification
-  role_specs = [ for filename in fileset(path.module, "../resources/${var.target_account_id}/federated-roles/*.yaml"): {
+  role_specs = [ for filename in fileset(path.module, "../resources/*/federated-roles/*.yaml"): {
     key              = filename
     role_yaml_map    = yamldecode(file(filename))
   }]
