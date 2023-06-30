@@ -50,7 +50,7 @@ locals {
       varset             = "${account}-vars"
       github_org         = var.github_org
       github_repo        = var.github_repo
-      trigger_patterns   = [ "${var.resource_folder}/${account}/**/*", "iam-kiosk/saml-pipeline/**/*", "iam-kiosk/partner-pipeline/**/*" ]
+      trigger_patterns   = account != var.saml_account_num ? [ "${var.resource_folder}/${account}/**/*", "iam-kiosk/partner-pipeline/**/*" ] : [ "${var.resource_folder}/${account}/**/*", "iam-kiosk/saml-pipeline/**/*"]
       ws_tags            = var.tags
       terraform_version  = var.terraform_version
       drift_detection    = var.drift_detection
