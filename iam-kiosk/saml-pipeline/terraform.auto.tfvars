@@ -1,7 +1,6 @@
 aws_region       = "us-west-2"
 aws_role         = "Administrator"
 saml_account_num = "782391863272"
-ss_account_num   = "782391863272"
 target_account_id= "567207295412"
 role_file_paths     = "./orchestration/test/resources/567207295412/federated-roles/*.yaml"
 user_file_paths     = "./orchestration/test/resources/567207295412/service-accounts/*.yaml"

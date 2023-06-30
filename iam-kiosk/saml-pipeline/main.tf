@@ -68,7 +68,6 @@ locals {
   optional_tags      = var.optional_tags
   aws_region         = var.aws_region
   saml_account_num   = var.saml_account_num
-  ss_account_num     = var.ss_account_num
   target_account_id  = var.target_account_id
 
   ### Read, Parse & Encode Role specification
