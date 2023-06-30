@@ -40,11 +40,11 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias   = "saml"
+  alias  = "saml"
+  region = var.aws_region
   assume_role {
     role_arn = "arn:aws:iam::${var.saml_account_num}:role/${var.aws_role}"
   }
-  region = var.aws_region
 }
 
 
@@ -68,11 +68,10 @@ locals {
   optional_tags      = var.optional_tags
   aws_region         = var.aws_region
   saml_account_num   = var.saml_account_num
-  ss_account_num     = var.ss_account_num
   target_account_id  = var.target_account_id
 
   ### Read, Parse & Encode Role specification
-  role_specs = [ for filename in fileset(path.module, "../resources/${var.target_account_id}/federated-roles/*.yaml"): {
+  role_specs = [ for filename in fileset(path.module, "../resources/*/federated-roles/*.yaml"): {
     key              = filename
     role_yaml_map    = yamldecode(file(filename))
   }]
@@ -98,17 +97,17 @@ locals {
 
 #################################
 # FEDERATED ROLES Specification
-# PARTNER & SAML Role Creation
+# SAML Role Creation
 #################################
-module "federated_roles" {
-  source = "./modules/federated-roles"
+module "saml_roles" {
+  source = "./modules/saml-roles"
   providers = {
-    aws.partner = aws.partner
     aws.saml = aws.saml
-   }
-
+  }
+  
   for_each          = local.role_specifications
   account_num       = regex("[0-9]{12}", each.key)  # parse AWS acct #
+  saml_account_num  = var.saml_account_num
   name              = each.value["Name"]
   managed_policies  = lookup(each.value, "ManagedPolicyArns", [])
   inline_policies   = lookup(each.value, "Statement", null) != null ? (
@@ -116,32 +115,3 @@ module "federated_roles" {
                     ) : ( [] )
   tags              = merge(merge(local.tags, local.optional_tags), lookup(each.value, "Tags", {})) # Precedence = yaml, optional, default
 }
-
-###################################
-# SERVICE ACCOUNT Specification
-# Create managed policy and user
-###################################
-module "service_accounts" {
-  source = "./modules/service-accounts"
-  providers = {
-    aws.partner = aws.partner
-  }
-
-  for_each          = local.user_specifications
-  account_num       = local.target_account_id
-  name              = each.value["Name"]
-  managed_policies  = lookup(each.value, "ManagedPolicyArns", [])
-  inline_policies   = lookup(each.value, "Statement", null) != null ? (
-                    [ jsonencode({ "Version" : "2012-10-17", "Statement" : each.value["Statement"] })]
-                    ) : ( [] )
-  tags              = merge(merge(local.tags, local.optional_tags), lookup(each.value, "Tags", {})) # Precedence = yaml, optional, default
-}
-
-# resource "null_resource" "list-files" {
-
-#   provisioner "local-exec" {
-#     command = <<-EOT
-#     find .. -type f -print
-#     EOT
-#   }
-# }

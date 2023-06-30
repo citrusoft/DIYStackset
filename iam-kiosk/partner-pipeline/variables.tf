@@ -16,12 +16,6 @@ variable "target_account_id" {
   # default = "241689241215" # "424304752381"
 }
 
-variable "ss_account_num" {
-  type        = string
-  description = "Shared services account number."
-  default = ""
-}
-
 variable "saml_account_num" {
   type        = string
   description = "AWS-SAML Integration account number, mandatory"

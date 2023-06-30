@@ -15,7 +15,7 @@ variable "account_num" {
   default     = null
 }
 
-variable "auth_account_num" {
+variable "saml_account_num" {
   type        = string
   description = "AWS account number of SAML auth, mandatory"
   default     = 739846873405
