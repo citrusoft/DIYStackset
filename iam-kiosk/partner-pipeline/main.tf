@@ -105,7 +105,7 @@ module "federated_roles" {
 
   for_each          = local.role_specifications
   account_num       = regex("[0-9]{12}", each.key)  # parse AWS acct #
-  auth_account_num  = var.saml_account_num
+  saml_account_num  = var.saml_account_num
   name              = each.value["Name"]
   managed_policies  = lookup(each.value, "ManagedPolicyArns", [])
   inline_policies   = lookup(each.value, "Statement", null) != null ? (

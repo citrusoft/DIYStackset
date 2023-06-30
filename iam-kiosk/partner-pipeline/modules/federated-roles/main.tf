@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "trust_saml2assume_partner_role" {
     ]
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::${var.auth_account_num}:root"]
+      identifiers = ["arn:aws:iam::${var.saml_account_num}:root"]
       # identifiers = ["arn:aws:iam::${data.aws_caller_identity.saml.account_id}:root"]
     }
   }

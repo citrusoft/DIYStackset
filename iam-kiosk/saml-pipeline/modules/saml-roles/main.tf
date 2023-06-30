@@ -46,7 +46,7 @@ resource "aws_iam_role" "saml_integration_role" {
   force_detach_policies      = var.force_detach_policies
   max_session_duration       = var.max_session_duration
   tags     = merge(merge(var.tags, var.optional_tags), {
-                workspace = "ccoe-iam-${var.auth_account_num}"
+                workspace = "ccoe-iam-${var.saml_account_num}"
               })
 }
 
@@ -60,7 +60,7 @@ data "aws_iam_policy_document" "trust_saml_policy" {
     effect = "Allow"
     principals {
       type        = "Federated"
-      identifiers = ["arn:aws:iam::${var.auth_account_num}:saml-provider/${var.saml_provider}"]
+      identifiers = ["arn:aws:iam::${var.saml_account_num}:saml-provider/${var.saml_provider}"]
       # identifiers = ["arn:aws:iam::${data.aws_caller_identity.saml.account_id}:saml-provider/${var.saml_provider}"]
     }
     condition {
