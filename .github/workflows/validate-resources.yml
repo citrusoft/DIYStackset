@@ -3,8 +3,8 @@ run-name: ${{ github.actor }} is validating YAML specifications. 🚀
 on:
   push:
   pull_request:
-  schedule:
-    - cron: $cron-weekly
+  # schedule:
+  #   - cron: $cron-weekly
 
 permissions:
   contents: read
