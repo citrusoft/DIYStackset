@@ -19,6 +19,7 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: 'us-east-2'
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
@@ -31,10 +32,15 @@ jobs:
         uses: unfor19/install-aws-cli-action@master
         with:
           version: "2"
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: 'us-east-2'
       - run: aws --version
         shell: bash
-      - name: Validate the yaml-files
-        run: aws sts get-caller-identity
+      - run: aws sts get-caller-identity
+        shell: bash
+      # - name: Validate the yaml-files
       #   run: |
           # find ${{ github.workspace }} -print -type f
           # echo $AWS_ACCESS_KEY_ID
