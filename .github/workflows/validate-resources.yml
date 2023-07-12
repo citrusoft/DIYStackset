@@ -30,6 +30,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           # find ${{ github.workspace }} -print -type f
+          echo $AWS_ACCESS_KEY_ID
+          echo ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          export AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY
+          aws sts get-caller-identity
           ./validate-yaml.sh ${{ github.workspace }}
         # continue-on-error: true
       - run: echo "🍏 This job's status is ${{ job.status }}."
