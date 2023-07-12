@@ -1,4 +1,4 @@
-name: validate-specs
+name: validate-resources
 run-name: ${{ github.actor }} is validating YAML specifications. 🚀
 on:
   push:
@@ -27,6 +27,6 @@ jobs:
       - name: Lint the yaml-files
         run: |
           # find ${{ github.workspace }} -print -type f
-          ./lint-yaml.sh ${{ github.workspace }}
+          ./validate-yaml.sh ${{ github.workspace }}
         continue-on-error: true
       - run: echo "🍏 This job's status is ${{ job.status }}."
