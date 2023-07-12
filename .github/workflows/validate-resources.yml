@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  yaml-lint:
+  validate-resources:
     runs-on: ubuntu-latest
     permissions:
       contents: read # for checkout to fetch code
@@ -28,5 +28,5 @@ jobs:
         run: |
           # find ${{ github.workspace }} -print -type f
           ./validate-yaml.sh ${{ github.workspace }}
-        continue-on-error: true
+        # continue-on-error: true
       - run: echo "🍏 This job's status is ${{ job.status }}."
