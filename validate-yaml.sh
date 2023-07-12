@@ -10,8 +10,10 @@ if [ "$#" -lt 1 ]; then
   echo "Usage: validate-yaml.sh directory"
   exit -1
 fi
+
 function evaluate_returned_status() {
-  if [ "$1" != "0" ]; then
+  echo "STATUS=$1"
+  if [[ "${EXIT_CODE}" == "0" && "$1" != "0" ]]; then
     EXIT_CODE=$1
   fi
 }
@@ -36,9 +38,14 @@ do
     jq . ${json_file} >policy_file.json
     mv policy_file.json ${json_file}
     cat -n ${json_file}
-    aws accessanalyzer validate-policy --policy-type IDENTITY_POLICY --policy-document "file://${json_file}"
-    evaluate_returned_status $?
-    rm ${json_file}
+    aws accessanalyzer validate-policy --policy-type IDENTITY_POLICY --policy-document "file://${json_file}" --no-paginate | tee /tmp/$$
+    if [ $(wc -c /tmp/$$ | awk '{print  $1}') -gt 23 ]; then
+      STATUS=9
+    else
+      STATUS=0
+    fi
+    evaluate_returned_status $STATUS
+    rm ${json_file} /tmp/$$
   fi
 done
 
