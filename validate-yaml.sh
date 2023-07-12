@@ -12,7 +12,7 @@ if [ "$#" -lt 1 ]; then
 fi
 
 function evaluate_returned_status() {
-  echo "STATUS=$1"
+  # echo "STATUS=$1"
   if [[ "${EXIT_CODE}" == "0" && "$1" != "0" ]]; then
     EXIT_CODE=$1
   fi
@@ -29,6 +29,10 @@ do
     echo "YYYYYYYYYYYYYYYYYYyamllint $file"
     yamllint -s -d "{extends: default, rules: {new-lines: disable, line-length: {max: 180}}}" $file
     evaluate_returned_status $?
+    if [ $(yq  .Statement ${file} | wc -l | awk '{print  $1}') -lt 6 ]; then
+      echo "NNNNNNNNNNNNNNNNNNo Statements to validate ${file}"
+      continue
+    fi
     json_file="`echo "$file" | awk -F '.' '{print $1}'`"
     json_file="${json_file}.json"
     echo "VVVVVVVVVVVVVVVVVVvalidate-policy ${json_file}"
